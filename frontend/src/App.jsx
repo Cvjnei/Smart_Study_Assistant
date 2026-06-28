@@ -47,21 +47,59 @@ function Dashboard({ token, onLogout }) {
   }
 
   return (
-    <div>
-      <h1>Smart Study Assistant</h1>
-      <button onClick={onLogout}>Logout</button>
-      <Chat token={token} notes={notes} />
-      <h2>Create Note</h2>
-      <input placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} />
-      <input placeholder="Content" value={content} onChange={e => setContent(e.target.value)} />
-      <button onClick={createNote}>Save Note</button>
-      <h2>Notes</h2>
-      <button onClick={loadNotes}>Load Notes</button>
-      <ul>
-        {notes.map(note => (
-          <li key={note.id}>{note.title}: {note.content}</li>
-        ))}
-      </ul>
+    <div className="min-h-screen bg-gray-100">
+      <nav className="bg-white shadow px-8 py-4 flex justify-between items-center">
+        <h1 className="text-xl font-bold text-blue-600">Smart Study Assistant</h1>
+        <button
+          className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition font-semibold"
+          onClick={onLogout}
+        >
+          Logout
+        </button>
+      </nav>
+      <div className="max-w-4xl mx-auto p-8 space-y-8">
+        <Chat token={token} notes={notes} />
+        <div className="bg-white p-6 rounded-2xl shadow">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">Create Note</h2>
+          <input
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Title"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+          />
+          <input
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Content"
+            value={content}
+            onChange={e => setContent(e.target.value)}
+          />
+          <button
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition font-semibold"
+            onClick={createNote}
+          >
+            Save Note
+          </button>
+        </div>
+        <div className="bg-white p-6 rounded-2xl shadow">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold text-gray-800">My Notes</h2>
+            <button
+              className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition font-semibold"
+              onClick={loadNotes}
+            >
+              Refresh
+            </button>
+          </div>
+          <ul className="space-y-3">
+            {notes.map(note => (
+              <li key={note.id} className="border border-gray-200 rounded-lg px-4 py-3">
+                <p className="font-semibold text-gray-800">{note.title}</p>
+                <p className="text-gray-600 text-sm">{note.content}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   )
 }
@@ -87,18 +125,28 @@ function App() {
   }
 
   return (
-    <div>
-      <h1>Smart Study Assistant</h1>
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
+      <h1 className="text-3xl font-bold text-gray-800 mb-8">Smart Study Assistant</h1>
       {page === "login" && (
         <>
           <Login onLogin={handleLogin} />
-          <p>Don't have an account? <button onClick={() => setPage("register")}>Register</button></p>
+          <p className="mt-4 text-gray-600">
+            Don't have an account?{" "}
+            <button className="text-blue-600 hover:underline font-semibold" onClick={() => setPage("register")}>
+              Register
+            </button>
+          </p>
         </>
       )}
       {page === "register" && (
         <>
           <Register onRegister={() => setPage("login")} />
-          <p>Already have an account? <button onClick={() => setPage("login")}>Login</button></p>
+          <p className="mt-4 text-gray-600">
+            Already have an account?{" "}
+            <button className="text-blue-600 hover:underline font-semibold" onClick={() => setPage("login")}>
+              Login
+            </button>
+          </p>
         </>
       )}
     </div>
