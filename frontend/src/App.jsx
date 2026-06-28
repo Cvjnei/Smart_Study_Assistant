@@ -2,6 +2,7 @@ import { useState } from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import Login from "./Login"
 import Register from "./Register"
+import Chat from "./Chat"
 
 function Dashboard({ token, onLogout }) {
   const [notes, setNotes] = useState([])
@@ -37,6 +38,7 @@ function Dashboard({ token, onLogout }) {
     <div>
       <h1>Smart Study Assistant</h1>
       <button onClick={onLogout}>Logout</button>
+      <Chat token={token} />
       <h2>Create Note</h2>
       <input placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} />
       <input placeholder="Content" value={content} onChange={e => setContent(e.target.value)} />

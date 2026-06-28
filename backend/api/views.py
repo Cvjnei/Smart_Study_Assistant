@@ -1,3 +1,4 @@
+import requests
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import render
 from rest_framework import generics
@@ -31,3 +32,20 @@ class RegisterView(APIView):
 
         user = User.objects.create_user(username=username, password=password)
         return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
+        
+class ChatView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        message = request.data.get("message")
+        if not message:
+            return Response({"error": "Message required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        response = requests.post("http://localhost:11434/api/generate", json={
+            "model": "llama3.2",
+            "prompt": message,
+            "stream": False
+        })
+
+        reply = response.json().get("response", "")
+        return Response({"reply": reply})
