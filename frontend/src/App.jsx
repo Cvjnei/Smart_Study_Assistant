@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import Login from "./Login"
 import Register from "./Register"
@@ -13,9 +13,21 @@ function Dashboard({ token, onLogout }) {
     fetch("http://127.0.0.1:8000/api/notes/", {
       headers: { "Authorization": `Bearer ${token}` }
     })
-      .then(res => res.json())
-      .then(data => setNotes(data))
+      .then(res => {
+        if (res.status === 401) {
+          onLogout()
+          return []
+        }
+        return res.json()
+      })
+      .then(data => {
+        if (Array.isArray(data)) setNotes(data)
+      })
   }
+
+  useEffect(() => {
+    loadNotes()
+  }, [])
 
   function createNote() {
     fetch("http://127.0.0.1:8000/api/notes/", {
@@ -32,13 +44,13 @@ function Dashboard({ token, onLogout }) {
         setContent("")
         loadNotes()
       })
-    }
+  }
 
   return (
     <div>
       <h1>Smart Study Assistant</h1>
       <button onClick={onLogout}>Logout</button>
-      <Chat token={token} />
+      <Chat token={token} notes={notes} />
       <h2>Create Note</h2>
       <input placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} />
       <input placeholder="Content" value={content} onChange={e => setContent(e.target.value)} />
@@ -59,16 +71,16 @@ function App() {
   const [token, setToken] = useState(localStorage.getItem("token"))
   const [page, setPage] = useState("login")
 
-function handleLogin(accessToken) {
-  localStorage.setItem("token", accessToken)
-  setToken(accessToken)
-}
+  function handleLogin(accessToken) {
+    localStorage.setItem("token", accessToken)
+    setToken(accessToken)
+  }
 
-function handleLogout() {
-  localStorage.removeItem("token")
-  setToken(null)
-  setPage("login")
-}
+  function handleLogout() {
+    localStorage.removeItem("token")
+    setToken(null)
+    setPage("login")
+  }
 
   if (token) {
     return <Dashboard token={token} onLogout={handleLogout} />

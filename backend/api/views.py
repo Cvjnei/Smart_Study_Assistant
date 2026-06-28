@@ -38,12 +38,22 @@ class ChatView(APIView):
 
     def post(self, request):
         message = request.data.get("message")
+        note_id = request.data.get("note_id")
+
         if not message:
             return Response({"error": "Message required"}, status=status.HTTP_400_BAD_REQUEST)
 
+        prompt = message
+        if note_id:
+            try:
+                note = Note.objects.get(id=note_id, )
+                prompt = f"Here is a study note:\nTitle: {note.title}\nContent: {note.content}\n\nQuestion: {message}"
+            except Note.DoesNotExist:
+                return Response({"error": "Note not found"}, status=status.HTTP_404_NOT_FOUND)
+
         response = requests.post("http://localhost:11434/api/generate", json={
             "model": "llama3.2",
-            "prompt": message,
+            "prompt": prompt,
             "stream": False
         })
 
